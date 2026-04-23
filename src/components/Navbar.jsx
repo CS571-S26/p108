@@ -1,9 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { Navbar as BSNavbar, Nav, Container } from "react-bootstrap";
- 
+
 export default function Navbar() {
   const location = useLocation();
- 
+
   return (
     <BSNavbar bg="dark" variant="dark" expand="md" sticky="top">
       <Container>
@@ -25,10 +25,12 @@ export default function Navbar() {
             <Nav.Link as={Link} to="/duel/hard" eventKey="/duel/hard">
               Hard
             </Nav.Link>
+            <Nav.Link as={Link} to="/stats" eventKey="/stats">
+              Stats
+            </Nav.Link>
           </Nav>
         </BSNavbar.Collapse>
       </Container>
     </BSNavbar>
   );
 }
- 

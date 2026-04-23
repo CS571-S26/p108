@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Spinner } from "react-bootstrap";
+import { recordSolve } from "../utils/stats";
+
 
 const LANGUAGES = [
   { label: "Python 3", langId: 71, key: "python", ext: ".py", comment: "# " },
@@ -100,7 +102,7 @@ function HighlightedCode({ code, langKey }) {
   );
 }
 
-export default function CodeEditor({ problem, onResult }) {
+export default function CodeEditor({ problem, onResult, difficulty, elapsed }) {
   const [langIndex, setLangIndex] = useState(0);
   const [code, setCode] = useState(() => problem?.starterCode?.[LANGUAGES[0].key] || "");
   const [running, setRunning] = useState(false);
@@ -191,15 +193,34 @@ export default function CodeEditor({ problem, onResult }) {
         }),
       });
       const data = await res.json();
+      const stdout = data.stdout || "";
+      const stderr = data.stderr || data.compile_output || "";
+      const exitCode = data.status?.id === 3 ? 0 : 1;
+
       onResult({
         language: selectedLang.label,
         version: "",
-        run: {
-          stdout: data.stdout || "",
-          stderr: data.stderr || data.compile_output || "",
-          code: data.status?.id === 3 ? 0 : 1,
-        },
+        run: { stdout, stderr, code: exitCode },
       });
+
+      // If no runtime error and every test in stdout reported PASS, record the solve.
+      const testLines = stdout.split("\n").filter(
+        (l) => l.startsWith("PASS") || l.startsWith("FAIL")
+      );
+      const allPassed =
+        exitCode === 0 &&
+        !stderr &&
+        testLines.length > 0 &&
+        testLines.every((l) => l.startsWith("PASS"));
+
+      if (allPassed && difficulty && problem?.title) {
+        recordSolve({
+          difficulty,
+          title: problem.title,
+          language: selectedLang.label,
+          elapsedSeconds: elapsed ?? 0,
+        });
+      }
     } catch (err) {
       onResult({ status: "error", message: err.message });
     } finally {

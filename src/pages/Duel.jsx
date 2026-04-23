@@ -54,7 +54,13 @@ export default function Duel() {
           <Col md={8} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", height: "100%" }}>
             <div style={{ flex: "1 1 0", minHeight: 0 }}>
               {/* key={difficulty} forces full remount when switching problems */}
-              <CodeEditor key={difficulty} problem={problem} onResult={setResult} />
+              <CodeEditor
+                key={difficulty}
+                problem={problem}
+                onResult={setResult}
+                difficulty={difficulty}
+                elapsed={elapsed}
+              />
             </div>
             <div style={{ flex: "0 0 auto" }}>
               <OutputPanel result={result} totalTests={problem.testCases?.length ?? 0} />
