@@ -5,6 +5,7 @@ import ProblemPanel from "../components/ProblemPanel";
 import CodeEditor from "../components/CodeEditor";
 import OutputPanel from "../components/OutputPanel";
 import { problems } from "../data/problems";
+import DuelHeader from "../components/DuelHeader";
 
 export default function Duel() {
   const { difficulty } = useParams();
@@ -33,32 +34,16 @@ export default function Duel() {
     );
   }
 
-  const formatTime = (s) => {
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-  };
 
-  const diffColor = { easy: "#238636", medium: "#d29922", hard: "#f85149" };
 
   return (
     <div style={{ background: "#0d1117", minHeight: "100vh" }}>
-      {/* Top bar */}
-      <div style={{ background: "#161b22", borderBottom: "1px solid #30363d", padding: "0.6rem 1.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
-        <Button size="sm" variant="outline-secondary" onClick={() => navigate("/")} style={{ borderColor: "#30363d", color: "#8b949e" }}>
-          ← Back
-        </Button>
-        <span style={{ color: "#e6edf3", fontWeight: "600" }}>{problem.title}</span>
-        <span style={{ color: diffColor[difficulty], fontSize: "0.8rem", fontWeight: "600", textTransform: "capitalize" }}>
-          {difficulty}
-        </span>
-        <div className="ms-auto d-flex align-items-center gap-2">
-          <span style={{ color: "#8b949e", fontSize: "0.8rem" }}>⏱</span>
-          <span style={{ color: "#e6edf3", fontFamily: "monospace", fontWeight: "600", fontSize: "1rem", minWidth: "60px" }}>
-            {formatTime(elapsed)}
-          </span>
-        </div>
-      </div>
+      <DuelHeader
+        title={problem.title}
+        difficulty={difficulty}
+        elapsed={elapsed}
+        onBack={() => navigate("/")}
+      />
 
       {/* Main layout */}
       <Container fluid className="py-3 px-3">
